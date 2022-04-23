@@ -34,9 +34,12 @@ exports.create = (req, res) => {
     });
 };
 
-// Retrieve all Clientes from the database.
+// Retrieve all Clientes from the database where nome = req.query.nome
 exports.findAll = (req, res) => {
-  Cliente.findAll()
+  const nome = req.query.nome;
+  var condition = nome ? { nome: { [Op.like]: `%${nome}%` } } : null;
+
+  Cliente.findAll({ where: condition })
     .then(data => {
       res.send(data);
     })
@@ -48,22 +51,51 @@ exports.findAll = (req, res) => {
     });
 };
 
-// // Retrieve all Tutorials from the database.
-// exports.findAll = (req, res) => {
-//   const cpf = req.query.cpf;
-//   var condition = cpf ? { cpf: { [Op.like]: `%${cpf}%` } } : null;
+exports.update = (req, res) => {
+  const cpf = req.params.cpf;
+  Cliente.update(req.body, {
+    where: { cpf: cpf }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Cliente was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update Cliente with cpf=${cpf}. Maybe Cliente was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating Cliente with cpf=" + cpf
+      });
+    });
+};
 
-//   Cliente.findAll({ where: condition })
-//     .then(data => {
-//       res.send(data);
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message:
-//           err.message || "Some error occurred while retrieving clientes."
-//       });
-//     });
-// };
+exports.delete = (req, res) => {
+  const cpf = req.params.cpf;
+  Cliente.destroy({
+    where: { cpf: cpf }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Cliente was deleted successfully!"
+        });
+      } else {
+        res.send({
+          message: `Cannot delete Cliente with cpf=${cpf}. Maybe Cliente was not found!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Could not delete Cliente with cpf=" + cpf
+      });
+    });
+};
 // 
 // // Find a single Cliente with an cpf
 // exports.findOne = (req, res) => {
@@ -84,14 +116,6 @@ exports.findAll = (req, res) => {
 //         message: "Error retrieving Cliente with cpf=" + cpf
 //       });
 //     });
-// };
-// // Update a Tutorial by the id in the request
-// exports.update = (req, res) => {
-  
-// };
-// // Delete a Tutorial with the specified id in the request
-// exports.delete = (req, res) => {
-  
 // };
 // // Delete all Tutorials from the database.
 // exports.deleteAll = (req, res) => {

@@ -1,14 +1,17 @@
 <template>
   <v-app>
-    <v-app-bar app dark>
+    <v-app-bar app dark color="blue">
       <div class="d-flex align-center mr-2">
         BemZen
       </div>
+      <v-btn to="/agendamentos" text>
+        Agendamentos
+      </v-btn>
       <v-btn to="/clientes" text>
         Clientes
       </v-btn>
-      <v-btn to="/add" text>
-        Cadastrar Cliente
+      <v-btn to="/addAgendamento" text>
+        Novo Agendamento
       </v-btn>
     </v-app-bar>
     <v-main>

@@ -5,9 +5,12 @@ module.exports = app => {
 
     // Create a new Cliente
     router.post("/", clientes.create);
-    // Retrieve all Tutorials
+    // Retrieve all Clientes
     router.get("/", clientes.findAll);
-    // router.get("/:cpf", clientes.findOne);
+    // Update a Cliente with cpf
+    router.put("/:cpf", clientes.update);
+    // Delete a Cliente with cpf
+    router.delete("/:cpf", clientes.delete);
 
     app.use('/api/clientes', router);
   };
