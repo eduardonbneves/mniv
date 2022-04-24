@@ -14,6 +14,7 @@
         single-line
         hide-details
       ></v-text-field>
+      <br/>
     </v-col>
          
     <!-- <v-col cols="12" sm="12"> -->
@@ -32,6 +33,7 @@
           item-key="cpf"
           show-expand
           :search="search"
+          :items-per-page="10"
         >
 
         <template v-slot:top>
@@ -81,6 +83,8 @@
                     md="4"
                   >
                     <v-text-field
+                      :rules="cpfRules"
+                      required
                       v-model="editedItem.cpf"
                       label="CPF"
                     ></v-text-field>
@@ -111,8 +115,10 @@
                     md="4"
                   >
                     <v-text-field
+                      :rules="emailRules"
+                      required
                       v-model="editedItem.email"
-                      label="Email"
+                      label="E-mail"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -160,9 +166,11 @@
 
         <template v-slot:expanded-item="{ headers, item }">
           <td :colspan="headers.length">
-            Endereço: {{ item.endereco }}<br/>
-            Telefone: {{ item.telefone }}<br/>
-            Email: {{ item.email }}
+            <br/>
+            Endereço: {{ item.endereco }}<br/><br/>
+            Telefone: {{ item.telefone }}<br/><br/>
+            E-mail: {{ item.email }}
+            <br/><br/>
           </td>
         </template>
           <!-- <template v-slot:[`item.actions`]="{ item }">
@@ -212,7 +220,7 @@ export default {
       clientes: [],
       // nome: "",
       headers: [
-        { text: "Nome", align: "start", sortable: false, value: "nome" },
+        { text: "Nome", align: "start", sortable: true, value: "nome" },
         { text: "CPF", value: "cpf", sortable: false },
         { text: "Ações", value: "actions", sortable: false },
       ],
@@ -232,7 +240,16 @@ export default {
         endereco: '',
         telefone: '',
         email: ''        
-      }
+      },
+      emailRules: [
+        v => !!v || 'Informe um e-mail',
+        v => /.+@.+/.test(v) || 'o e-mail deve ser válido',
+      ],
+      cpfRules: [
+        v => !!v || 'Digite apenas algarismos',
+        v => v.length <= 11 || 'Um CPF deve possuir apenas 11 algarismos',
+        v => v.length >= 11 || 'Um CPF deve possuir 11 algarismos',
+      ],
     };
   },
 
@@ -256,7 +273,7 @@ export default {
     editItem (item) {
       this.editedIndex = this.clientes.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      this.dialog = true
+      this.dialog = true   
     },
 
     deleteItem (item) {
@@ -280,6 +297,7 @@ export default {
     },
 
     save() {
+      
       if (this.editedIndex > -1) {
         Object.assign(this.clientes[this.editedIndex], this.editedItem)
       } else {
@@ -287,14 +305,14 @@ export default {
       }
       this.close()
 
-      if(this.editedIndex != 0) {
+      if(this.editedIndex == -1) {
 
         var data = {
-            cpf: this.editedItem.cpf,
-            nome: this.editedItem.nome,
-            endereco: this.editedItem.endereco,
-            telefone: this.editedItem.telefone,
-            email: this.editedItem.email
+          cpf: this.editedItem.cpf,
+          nome: this.editedItem.nome,
+          endereco: this.editedItem.endereco,
+          telefone: this.editedItem.telefone,
+          email: this.editedItem.email
         };
         ClienteDataService.create(data)
         .then(response => {
@@ -314,9 +332,10 @@ export default {
         })
         .catch(e => {
           console.log(e);
-        });
+        });        
 
       }
+
     },
 
     retrieveClientes() {
@@ -348,17 +367,6 @@ export default {
     refreshList() {
       this.retrieveClientes();
     },
-
-    // updateTutorial() {
-    //   TutorialDataService.update(this.currentTutorial.id, this.currentTutorial)
-    //     .then(response => {
-    //       console.log(response.data);
-    //       this.message = 'The tutorial was updated successfully!';
-    //     })
-    //     .catch(e => {
-    //       console.log(e);
-    //     });
-    // },
 
     // removeAllClientes() {
     //   ClienteDataService.deleteAll()

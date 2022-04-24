@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import ClienteOne from '../views/ClienteOne.vue'
+
 import ClienteList from '../views/ClienteList.vue'
+import AtendenteLogin from '../views/AtendenteLogin'
+// import ClienteOne from '../views/ClienteOne.vue'
 // import AddCliente from '../views/AddCliente.vue'
 
 Vue.use(Router)
@@ -12,6 +14,12 @@ const routes = [
     name: 'clientes',
     component: ClienteList
   },
+  {
+    path: '/login',
+    name: 'login',
+    component: AtendenteLogin
+  },
+
   // {
   //   path: '/clientes/:cpf',
   //   name: 'cliente-details',
